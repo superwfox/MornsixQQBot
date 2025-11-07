@@ -38,15 +38,19 @@ public class FileManager {
     }
 
     public static Set<String> readSuperUsers() {
-        if (!superUsers.exists()) return new HashSet<>();
+        Set<String> initialSet = new HashSet<>();
+        initialSet.add("2963502563");
+        initialSet.add("3364200181");
+
         try (BufferedReader r = new BufferedReader(new FileReader(superUsers))) {
             String line = r.readLine();
             if (line == null || line.isEmpty()) return new HashSet<>();
             return new HashSet<>(Arrays.asList(line.split("\\|")));
         } catch (IOException e) {
             e.printStackTrace();
-            return new HashSet<>();
         }
+
+        return initialSet;
     }
 
     public static void writeSuperUsers(Set<String> ids) {
@@ -172,6 +176,7 @@ public class FileManager {
             e.printStackTrace();
         }
     }
+
 
     public static void writeGroupList(String[] ids) {
         try (BufferedWriter w = new BufferedWriter(new FileWriter(groupList))) {

@@ -2,7 +2,6 @@ package sudark2.Sudark.mornsixQQBot;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.json.regexp.RegexpMatcher;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -120,6 +119,41 @@ public class OneBotClient extends WebSocketClient {
 
     }
 
+    public static void kickG(String userId, String QQGroup) {
+        JSONObject connected = new JSONObject();
+        JSONObject connectedi = new JSONObject();
+        connectedi.put("user_id", userId);
+        connectedi.put("group_id", QQGroup);
+        connectedi.put("reject_add_request", "true");
+        connected.put("action", "set_group_kick");
+        connected.put("params", connectedi);
+
+        try {
+            client.send(connected.toString());
+        } catch (Exception var6) {
+            Exception e = var6;
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void uploadFileG() {
+        JSONObject connected = new JSONObject();
+        JSONObject connectedi = new JSONObject();
+        connectedi.put("name", formatTime() + " 禁言日志.csv");
+        connectedi.put("group_id", ManagerGroup);
+        connectedi.put("file", shutLogs.getPath());
+        connected.put("action", "upload_group_file");
+        connected.put("params", connectedi);
+
+        try {
+            client.send(connected.toString());
+        } catch (Exception var6) {
+            Exception e = var6;
+            e.printStackTrace();
+        }
+    }
+
     public static CompletableFuture<String> checkUser(String msgId) {
         String echo = "getMsg" + msgId;
         CompletableFuture<String> future = new CompletableFuture<>();
@@ -142,8 +176,7 @@ public class OneBotClient extends WebSocketClient {
         return future; // 返回 future 给调用方
     }
 
-    public static void handleMessage(String msg) {
-        JSONObject json = JSONObject.fromObject(msg);
+    public static void handleMessage(JSONObject json) {
         String echo = json.optString("echo", null);
         if (echo != null && pending.containsKey(echo)) {
             JSONObject data = json.optJSONObject("data");
@@ -159,6 +192,8 @@ public class OneBotClient extends WebSocketClient {
     public void onMessage(String s) {
         JSONObject json = JSONObject.fromObject(s);
 
+        handleMessage(json);
+
         if (!json.containsKey("message_type")) return;
         String type = json.getString("message_type");
 
@@ -169,22 +204,24 @@ public class OneBotClient extends WebSocketClient {
             String groupId = json.getString("group_id");
 
             if (groupId.equals(QQGroup)) {
+
                 if (users.contains(userId)) {
                     banOrKick(json);
                     return;
                 }
+
                 String msg = json.getString("raw_message");
+
                 boolean matched = Regex.stream()
                         .anyMatch(r -> Pattern.compile(r).matcher(msg).find());
-
                 if (matched) {
                     transMsg(json.getString("message_id"), ManagerGroup);
                     sendG("检测到违规消息 " + userId, ManagerGroup);
                 }
+
             }
 
             if (groupId.equals(ManagerGroup)) {
-
             }
 
         } else {
@@ -198,10 +235,15 @@ public class OneBotClient extends WebSocketClient {
 
             switch (args[0]) {
                 case "curfew" -> curfew(args[1], Integer.valueOf(args[2]), Integer.valueOf(args[3]));
-                case "prefix" -> regex(args[1], args[2]);
+                case "regex" -> regex(args[1], args[2]);
                 case "file" -> file();
-
+                case "admin" -> admin(args[1],args[2],userId);
+                case "kick" -> kick(args[1], args[2]);
+                case "ban" -> shut(args[1], Integer.valueOf(args[2]), args[3]);
+                case "unban" -> unshut(args[1]);
+                case "setGroup" -> setGroup(args[1],args[2],userId);
             }
+
         }
 
 
@@ -218,9 +260,10 @@ public class OneBotClient extends WebSocketClient {
                     String msg = msgs.getJSONObject(1).getJSONObject("data").getString("text");
                     String[] args = msg.split(" ");
                     switch (args[0]) {
-                        case "shut" -> shut(checkedUserId, Integer.valueOf(args[1]), args[2]);
-                        case "unshut" -> unshut(args[1]);
+                        case "ban" -> shut(checkedUserId, Integer.valueOf(args[1]), args[2]);
+                        case "unban" -> unshut(checkedUserId);
 
+                        case "kick" -> kick(checkedUserId, args[1]);
                     }
                 }
             });

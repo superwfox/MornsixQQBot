@@ -5,8 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static sudark2.Sudark.mornsixQQBot.FileManager.*;
-import static sudark2.Sudark.mornsixQQBot.OneBotClient.ban;
-import static sudark2.Sudark.mornsixQQBot.OneBotClient.sendG;
+import static sudark2.Sudark.mornsixQQBot.OneBotClient.*;
 
 public class CommandHandler {
 
@@ -17,6 +16,7 @@ public class CommandHandler {
 
             curfewTime[0] = hours;
             curfewTime[1] = minutes;
+            writeCurfew(curfewTime);
             sendG("宵禁开始时间为" + hours + ":" + minutes, ManagerGroup);
         }
 
@@ -26,6 +26,7 @@ public class CommandHandler {
 
             curfewTime[2] = hours;
             curfewTime[3] = minutes;
+            writeCurfew(curfewTime);
             sendG("宵禁结束时间为" + hours + ":" + minutes, ManagerGroup);
 
         }
@@ -51,25 +52,61 @@ public class CommandHandler {
         if (time == null) time = 0;
         if (reason == null) reason = "无";
         List<String[]> args = readShutLogs();
-
-        args.add(new String[]{userId, time.toString(), reason, formatTime()});
-        ban(userId, time, QQGroup);
+        args.add(new String[]{"禁言", userId, time.toString(), reason, formatTime()});
         writeShutLogs(args);
+
+        ban(userId, time, QQGroup);
         sendG("已禁言" + userId + " " + time + "秒\n原因：" + reason, ManagerGroup);
     }
 
     public static void unshut(String userId) {
+        List<String[]> args = readShutLogs();
+        args.add(new String[]{"解禁", userId, "0", "无", formatTime()});
+        writeShutLogs(args);
         ban(userId, 0, QQGroup);
         sendG("已解禁" + userId, ManagerGroup);
     }
 
-    public static void file(String UserId) {
+    public static void file() {
+        uploadFileG();
+    }
 
+    public static void admin(String mode, String userId,String askId) {
+        if (mode.equals("add")) {
+            if (users.contains(userId)) {
+                sendP(askId,"该用户已经是管理员");
+            } else {
+                users.add(userId);
+                writeSuperUsers(users);
+                sendG("已添加管理员\n" + userId, ManagerGroup);
+            }
+        } else {
+            if (users.contains(userId)) {
+                users.remove(userId);
+                writeSuperUsers(users);
+                sendG("已删除管理员\n" + userId, ManagerGroup);
+            } else {
+                sendP(askId,"该用户不是管理员");
+            }
+        }
     }
 
     public static void kick(String userId, String reason) {
         if (reason == null) reason = "无";
+
+        List<String[]> args = readShutLogs();
+        args.add(new String[]{"踢出", userId, "0", reason, formatTime()});
+        writeShutLogs(args);
+
+        kickG(userId, QQGroup);
         sendG("已踢出" + userId + "\n原因：" + reason, ManagerGroup);
+    }
+
+    public static void setGroup(String g1,String g2,String askId) {
+        if (g1 == null) g1 = "0";
+        if (g2 == null) g2 = "0";
+        sendP(askId,"已设置群号为" + g1 + " " + g2);
+        writeGroupList(new String[]{g1, g2});
     }
 
     public static String formatTime() {
