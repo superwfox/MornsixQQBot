@@ -22,17 +22,18 @@ public final class MornsixQQBot extends JavaPlugin {
         }
     }
 
-    static WebSocketClient client = new OneBotClient();
+    static WebSocketClient client = null;
 
     @Override
     public void onEnable() {
 
         initFiles();
         Clock.start();
+        client = new OneBotClient();
 
     }
 
-    public static Plugin get(){
+    public static Plugin get() {
         return Bukkit.getPluginManager().getPlugin("MornsixQQBot");
     }
 }
