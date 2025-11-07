@@ -1,0 +1,4 @@
+name: MornsixQQBot
+version: '8'
+main: sudark2.Sudark.mornsixQQBot.MornsixQQBot
+api-version: '1.21'
