@@ -1,20 +1,16 @@
 # MornsixQQBot
 
-一个基于 Paper API 的 Minecraft 服务器插件，通过 OneBot 协议实现 QQ 群管理功能。
-
-A Minecraft server plugin based on Paper API that implements QQ group management via OneBot protocol.
+基于 Paper API 的 Minecraft 服务器插件，通过 OneBot 协议实现 QQ 群管理功能。
 
 ---
 
-## 项目概述 | Overview
+## 项目概述
 
 本插件通过 WebSocket 连接 OneBot 服务端，实现 Minecraft 服务器与 QQ 群的双向通信，提供群成员管理、消息审核、宵禁控制等功能。
 
-This plugin connects to OneBot server via WebSocket, enabling bidirectional communication between Minecraft server and QQ groups, providing member management, message moderation, and curfew control.
-
 ---
 
-## 技术架构 | Architecture
+## 技术架构
 
 ```
 ┌─────────────────┐     WebSocket      ┌─────────────────┐
@@ -35,9 +31,9 @@ This plugin connects to OneBot server via WebSocket, enabling bidirectional comm
 
 ---
 
-## 核心设计 | Core Design
+## 核心设计
 
-### 事件驱动架构 | Event-Driven Architecture
+### 事件驱动架构
 
 采用 WebSocket 事件驱动模型而非轮询，显著降低资源消耗：
 
@@ -57,7 +53,7 @@ public static CompletableFuture checkUser(String usage, String msgId) {
 }
 ```
 
-### 静态方法协作 | Static Method Collaboration
+### 静态方法协作
 
 类间协作采用静态方法直接调用，避免对象实例化开销：
 
@@ -65,7 +61,7 @@ public static CompletableFuture checkUser(String usage, String msgId) {
 - 减少 GC 压力
 - 调用链路清晰，便于追踪
 
-### 定时任务优化 | Scheduled Task Optimization
+### 定时任务优化
 
 `Clock` 类使用 `ScheduledExecutorService` 实现分钟级精度调度：
 
@@ -81,24 +77,24 @@ private static long computeInitialDelay() {
 
 ---
 
-## 功能列表 | Features
+## 功能列表
 
-| 命令 | 功能 | Command | Function |
-|------|------|---------|----------|
-| `/ban <qq> <秒> [原因]` | 禁言 | Ban user |
-| `/unban <qq>` | 解禁 | Unban user |
-| `/kick <qq> [原因]` | 踢出 | Kick user |
-| `/admin add/remove <qq>` | 管理员管理 | Admin management |
-| `/curfew on/off <时> <分>` | 宵禁设置 | Curfew control |
-| `/regex add/remove/list [正则]` | 违禁词管理 | Regex filter |
-| `/setmice add/remove <qq>` | 黑名单管理 | Blacklist |
-| `/setnotice <内容>` | 设置公告 | Set notice |
-| `/file` | 上传日志 | Upload logs |
-| `/update` | 重载配置 | Reload config |
+| 命令 | 功能 |
+|------|------|
+| `/ban <qq> <秒> [原因]` | 禁言用户 |
+| `/unban <qq>` | 解除禁言 |
+| `/kick <qq> [原因]` | 踢出用户 |
+| `/admin add/remove <qq>` | 管理员管理 |
+| `/curfew on/off <时> <分>` | 宵禁设置 |
+| `/regex add/remove/list [正则]` | 违禁词管理 |
+| `/setmice add/remove <qq>` | 黑名单管理 |
+| `/setnotice <内容>` | 设置公告 |
+| `/file` | 上传日志 |
+| `/update` | 重载配置 |
 
 ---
 
-## 文件结构 | File Structure
+## 文件结构
 
 ```
 plugins/MornsixQQBot/
@@ -113,7 +109,7 @@ plugins/MornsixQQBot/
 
 ---
 
-## 性能特点 | Performance
+## 性能特点
 
 | 设计选择 | 性能收益 |
 |----------|----------|
@@ -125,14 +121,8 @@ plugins/MornsixQQBot/
 
 ---
 
-## 依赖 | Dependencies
+## 依赖
 
 - Paper API 1.21.10
 - Java-WebSocket 1.5.7
 - json-lib 2.4
-
----
-
-## License
-
-MIT
