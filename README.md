@@ -133,16 +133,6 @@ plugins/MornsixQQBot/
 
 ---
 
-## 构建 | Build
-
-```bash
-mvn clean package
-```
-
-输出：`target/MornsixQQBot-8.jar`
-
----
-
 ## License
 
 MIT
