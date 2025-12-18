@@ -1,4 +1,4 @@
-# MornsixQQBot
+# MornsixQQBot | [[English Documention]](https://github.com/superwfox/MornsixQQBot/blob/master/README_EN.md)
 
 基于 Paper API 的 Minecraft 服务器插件，通过 OneBot 协议实现 QQ 群管理功能。
 
