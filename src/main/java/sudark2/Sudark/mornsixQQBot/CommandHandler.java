@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static sudark2.Sudark.mornsixQQBot.FileManager.*;
-import static sudark2.Sudark.mornsixQQBot.OneBotClient.*;
+import static sudark2.Sudark.mornsixQQBot.onebot.OneBotApi.*;
 
 public class CommandHandler {
 
@@ -79,7 +79,7 @@ public class CommandHandler {
         writeShutLogs(args);
 
         ban(userId, time, QQGroup);
-        sendG("已禁言 [" + userId + "] " + time + "秒\n原因：" + reason + "\n处理者： " + askId, ManagerGroup + "\n总禁言次数 ： " + banTime);
+        sendG("已禁言 [" + userId + "] " + time + "秒\n原因：" + reason + "\n处理者： " + askId + "\n总禁言次数 ： " + banTime, ManagerGroup);
         sendG("已禁言 [" + userId + "] " + time + "秒\n原因：" + reason + "\n总禁言次数 ： " + banTime, QQGroup);
     }
 
@@ -184,7 +184,7 @@ public class CommandHandler {
         }
 
         String[] target = list.get(latest);
-        sendG("·将 [" + qq + "] \n" + target[4] + "\n\n禁言原因修改为: " + reason + "\n·处理者： " + askId, QQGroup);
+        sendG("·将 [" + qq + "] \n" + target[4] + "\n\n禁言原因修改为: " + reason + "\n·处理者： " + askId, ManagerGroup);
 
     }
 

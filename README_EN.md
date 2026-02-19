@@ -22,7 +22,11 @@ This plugin connects to OneBot server via WebSocket, enabling bidirectional comm
 ┌─────────────────────────────────────────────────────────┐
 │                    MornsixQQBot                         │
 ├─────────────────────────────────────────────────────────┤
-│  OneBotClient    │  Event-driven message handling       │
+│  OneBotClient    │  WebSocket entry and lifecycle       │
+│  OneBotApi       │  OneBot action sending               │
+│  OneBotEchoStore │  Echo async response state           │
+│  OneBotEventRouter│ Group/private/notice event routing  │
+│  OneBotReplyHandler│ Reply command + strict mute remark │
 │  CommandHandler  │  Command parsing & execution         │
 │  FileManager     │  Configuration persistence           │
 │  Clock           │  Scheduled task management           │
@@ -37,17 +41,20 @@ This plugin connects to OneBot server via WebSocket, enabling bidirectional comm
 
 Uses WebSocket event-driven model instead of polling, significantly reducing resource consumption:
 
-- `OneBotClient` extends `WebSocketClient`, handles all events via `onMessage` callback
+- `OneBotClient` extends `WebSocketClient`, focused on socket lifecycle and message entry
+- `OneBotEventRouter` dispatches events by type (request/group/private/notice)
+- `OneBotApi` centralizes OneBot action sending
+- `OneBotEchoStore` manages echo response matching and async completion
 - Messages trigger processing immediately, no polling required, near-zero CPU usage
 - Async callback mechanism: `CompletableFuture` + `ConcurrentHashMap` for request-response matching
 
 ```java
 // Async request example: matching responses via echo field
-private static final ConcurrentHashMap<String, CompletableFuture<String>> pending = new ConcurrentHashMap<>();
+private static final ConcurrentHashMap<String, CompletableFuture<Pair<String, JSONArray>>> pending = new ConcurrentHashMap<>();
 
-public static CompletableFuture checkUser(String usage, String msgId) {
-    CompletableFuture future = new CompletableFuture<>();
-    pending.put(echo, future);
+public static CompletableFuture<Pair<String, JSONArray>> checkUser(String msgId) {
+    CompletableFuture<Pair<String, JSONArray>> future = new CompletableFuture<>();
+    pending.put(msgId, future);
     client.send(json.toString());
     return future;
 }
@@ -94,6 +101,38 @@ private static long computeInitialDelay() {
 
 ---
 
+## Usage
+
+### 1. Initial Group Setup
+
+Send private command as admin:
+
+```text
+/setgroup <business_group_id> <manager_group_id>
+```
+
+### 2. Common Admin Commands
+
+```text
+/ban 123456 600 spam
+/unban 123456
+/kick 123456 repeated trolling
+/regex add (blocked_pattern)
+/setnotice Maintenance at 19:00 this Saturday
+```
+
+### 3. Reply-Based Operations in Manager Group
+
+```text
+Reply to forwarded violation message:
+ban 600 spam
+
+Reply to bot mute message with [reply to add reason]:
+add mute reason here
+```
+
+---
+
 ## File Structure
 
 ```
@@ -107,6 +146,20 @@ plugins/MornsixQQBot/
 └── mice.txt          # Blacklist
 ```
 
+### Source Structure
+
+```
+src/main/java/sudark2/Sudark/mornsixQQBot/
+├── OneBotClient.java                # WebSocket entry
+├── onebot/OneBotApi.java            # OneBot action wrapper
+├── onebot/OneBotEchoStore.java      # Echo async response state
+├── onebot/OneBotEventRouter.java    # Event routing
+├── onebot/OneBotReplyHandler.java   # Reply command and mute-remark matching
+├── CommandHandler.java              # Command handling
+├── FileManager.java                 # File IO and config loading
+└── Clock.java                       # Scheduled jobs
+```
+
 ---
 
 ## Performance
@@ -117,7 +170,7 @@ plugins/MornsixQQBot/
 | Static Method Calls | No object creation overhead |
 | ConcurrentHashMap | Thread-safe async response matching |
 | Single-thread ScheduledExecutor | Minimal scheduler resource usage |
-| File Write Retry | Reliable data persistence |
+| Fail-fast + admin notification | Lower complexity with clear failure signals |
 
 ---
 

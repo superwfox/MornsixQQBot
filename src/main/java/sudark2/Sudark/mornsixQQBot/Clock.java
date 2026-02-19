@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import static sudark2.Sudark.mornsixQQBot.FileManager.curfewTime;
 import static sudark2.Sudark.mornsixQQBot.FileManager.loadNotice;
-import static sudark2.Sudark.mornsixQQBot.OneBotClient.*;
+import static sudark2.Sudark.mornsixQQBot.onebot.OneBotApi.*;
 
 public class Clock {
     private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();

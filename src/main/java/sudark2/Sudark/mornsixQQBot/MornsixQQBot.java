@@ -13,25 +13,32 @@ import static sudark2.Sudark.mornsixQQBot.FileManager.initFiles;
 public final class MornsixQQBot extends JavaPlugin {
 
     static URI ServerURI;
-    static WebSocketClient client;
+    public static WebSocketClient client;
 
-    static {
+
+    @Override
+    public void onEnable() {
         try {
             ServerURI = new URI("ws://127.0.0.1:3001");
             client = new OneBotClient();
             client.connect();
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            getLogger().warning("§7WebSocket 地址格式错误，插件未能连接 OneBot");
         }
-    }
-
-
-    @Override
-    public void onEnable() {
 
         initFiles();
         Clock.start();
 
+    }
+
+    @Override
+    public void onDisable() {
+        try {
+            if (client != null) {
+                client.close();
+            }
+        } catch (Exception ignored) {
+        }
     }
 
     public static Plugin get() {
