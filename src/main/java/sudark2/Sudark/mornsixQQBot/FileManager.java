@@ -2,6 +2,7 @@ package sudark2.Sudark.mornsixQQBot;
 
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -16,35 +17,84 @@ public class FileManager {
     static Set<String> users = new HashSet<>();
     static String QQGroup = "";
     static String ManagerGroup = "";
+    static String BotQQ = "3101965697";
     static int[] curfewTime = new int[4];
     static Set<String> Regex = new HashSet<>();
+    static Set<String> mice = new HashSet<>();
     static File superUsers = new File(FileFolder, "superUsers.txt");
     static File groupList = new File(FileFolder, "groups.txt");
     static File shutLogs = new File(FileFolder, "shutLogs.csv");
     static File curfewFile = new File(FileFolder, "curfew.txt");
-    static File regexFile = new File(FileFolder, "prefix.txt");
+    static File regexFile = new File(FileFolder, "regex.txt");
+    static File noticeFile = new File(FileFolder, "notice.txt");
+    static File miceFile = new File(FileFolder, "mice.txt");
 
     public static void initFiles() {
+
+        if (!FileFolder.exists()) FileFolder.mkdirs();
+
         FileManager fileManager = new FileManager();
         fileManager.checkFile(fileManager.superUsers.getAbsolutePath());
         fileManager.checkFile(fileManager.shutLogs.getAbsolutePath());
         fileManager.checkFile(fileManager.groupList.getAbsolutePath());
         fileManager.checkFile(fileManager.curfewFile.getAbsolutePath());
+        fileManager.checkFile(fileManager.regexFile.getAbsolutePath());
+        fileManager.checkFile(fileManager.noticeFile.getAbsolutePath());
+        fileManager.checkFile(fileManager.miceFile.getAbsolutePath());
 
         users = readSuperUsers();
         loadGroupList();
         loadCurfew();
         loadRegex();
+        loadMice();
     }
+
+    public static Set<String> loadMice() {
+        Set<String> initialSet = new HashSet<>();
+
+        try (BufferedReader r = new BufferedReader(new FileReader(miceFile))) {
+            String line = r.readLine();
+            if (line == null || line.isEmpty()) return initialSet;
+            return new HashSet<>(Arrays.asList(line.split("\\|")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return initialSet;
+    }
+
+    public static void writeMice(Set<String> ids) {
+        try (BufferedWriter w = new BufferedWriter(new FileWriter(miceFile))) {
+            w.write(String.join("|", ids));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String loadNotice() {
+        try {
+            return Files.readString(noticeFile.toPath());
+        } catch (IOException e) {
+            e.printStackTrace(); // 或者用日志打印
+            return "无"; // 文件无法读取时返回空字符串
+        }
+    }
+
+    public static void writeNotice(String notice) {
+        try {
+            Files.writeString(noticeFile.toPath(), notice);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static Set<String> readSuperUsers() {
         Set<String> initialSet = new HashSet<>();
-        initialSet.add("2963502563");
-        initialSet.add("3364200181");
 
         try (BufferedReader r = new BufferedReader(new FileReader(superUsers))) {
             String line = r.readLine();
-            if (line == null || line.isEmpty()) return new HashSet<>();
+            if (line == null || line.isEmpty()) return initialSet;
             return new HashSet<>(Arrays.asList(line.split("\\|")));
         } catch (IOException e) {
             e.printStackTrace();
@@ -64,12 +114,14 @@ public class FileManager {
     public static void loadGroupList() {
         try (BufferedReader r = new BufferedReader(new FileReader(groupList))) {
             String line = r.readLine();
-            String[] groups = line.split("//|");
 
             if (line == null || line.isEmpty()) {
                 users.forEach(id -> sendP(id, "尚未设置群聊"));
                 return;
             }
+
+            String[] groups = line.split("\\|");
+
             if (groups.length < 2) {
                 users.forEach(id -> sendP(id, "还有一个群聊需要设置"));
                 return;
@@ -87,6 +139,10 @@ public class FileManager {
     public static void loadCurfew() {
         try (BufferedReader r = new BufferedReader(new FileReader(curfewFile))) {
             String line = r.readLine();
+            if (line == null || line.isEmpty()) {
+                curfewTime[0] = curfewTime[1] = curfewTime[2] = curfewTime[3] = 0;
+                return;
+            }
             String[] times = line.split(",");
             curfewTime[0] = Integer.parseInt(times[0]);
             curfewTime[1] = Integer.parseInt(times[1]);
@@ -151,7 +207,7 @@ public class FileManager {
     }
 
 
-    public static List<String> loadRegex() {
+    public static void loadRegex() {
         List<String> regexList = new ArrayList<>();
         try (BufferedReader r = new BufferedReader(new FileReader(regexFile))) {
             String line;
@@ -163,7 +219,7 @@ public class FileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return regexList;
+        Regex = new HashSet<>(regexList);
     }
 
     public static void writeRegexList() {

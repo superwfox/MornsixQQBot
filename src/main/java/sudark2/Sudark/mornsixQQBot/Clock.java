@@ -1,13 +1,14 @@
 package sudark2.Sudark.mornsixQQBot;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static sudark2.Sudark.mornsixQQBot.FileManager.curfewTime;
-import static sudark2.Sudark.mornsixQQBot.OneBotClient.cancelB;
-import static sudark2.Sudark.mornsixQQBot.OneBotClient.setB;
+import static sudark2.Sudark.mornsixQQBot.FileManager.loadNotice;
+import static sudark2.Sudark.mornsixQQBot.OneBotClient.*;
 
 public class Clock {
     private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -27,6 +28,10 @@ public class Clock {
 
         int hour = LocalDateTime.now().getHour();
         int min = LocalDateTime.now().getMinute();
+
+        if(hour == 19 && min == 0 && LocalDateTime.now().getDayOfWeek().equals(DayOfWeek.SATURDAY)){
+            broadNotice(loadNotice());
+        }
 
         if (hour == curfewTime[0] && min == curfewTime[1]) {
             setB();
