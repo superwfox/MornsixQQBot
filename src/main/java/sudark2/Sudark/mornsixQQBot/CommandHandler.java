@@ -174,16 +174,26 @@ public class CommandHandler {
     public static void replyMakeup(String qq, String reason, String askId) {
         List<String[]> list = readShutLogs();
         int latest = 0;
+        int loc = -1;
 
         for (String[] line : list) {
             if (line[1].equals(qq)) {
                 if (line[0].equals("禁言")) {
                     latest = list.indexOf(line);
+                    loc = list.indexOf(line);
                 }
             }
         }
 
+        if (loc == -1) {
+            sendP(askId, "该用户没有禁言记录");
+            return;
+        }
+
         String[] target = list.get(latest);
+        list.set(loc, new String[]{target[0], target[1], target[2], reason, target[4], askId});
+        writeShutLogs(list);
+
         sendG("·将 [" + qq + "] \n" + target[4] + "\n\n禁言原因修改为: " + reason + "\n·处理者： " + askId, ManagerGroup);
 
     }
