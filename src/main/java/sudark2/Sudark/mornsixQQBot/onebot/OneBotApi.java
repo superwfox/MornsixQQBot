@@ -7,7 +7,7 @@ import org.bukkit.plugin.Plugin;
 import java.nio.file.Files;
 import java.util.Base64;
 
-import static sudark2.Sudark.mornsixQQBot.CommandHandler.formatTime;
+import static sudark2.Sudark.mornsixQQBot.command.BanCommands.formatTime;
 import static sudark2.Sudark.mornsixQQBot.FileManager.ManagerGroup;
 import static sudark2.Sudark.mornsixQQBot.FileManager.QQGroup;
 import static sudark2.Sudark.mornsixQQBot.FileManager.shutLogs;
@@ -158,6 +158,55 @@ public class OneBotApi {
         sendAction(connected, "§7发送群公告失败");
     }
 
+    public static void sendCard(String url, String name, String faceUrl) {
+        JSONObject root = new JSONObject();
+        root.put("group_id", QQGroup);
+
+        JSONArray messageArr = new JSONArray();
+
+        JSONObject msg0 = new JSONObject();
+        msg0.put("type", "music");
+
+        JSONObject data = new JSONObject();
+        data.put("type", "custom");
+        data.put("url", "https://bilibili.com");
+        data.put("audio", url);
+        data.put("title", name);
+        data.put("image", faceUrl);
+
+        msg0.put("data", data);
+        messageArr.add(msg0);
+
+        root.put("message", messageArr);
+
+        JSONObject finalJson = new JSONObject();
+        finalJson.put("action", "send_group_msg");
+        finalJson.put("params", root);
+        sendAction(finalJson, "§7发送卡片失败");
+    }
+
+    public static void sendPicture(String base64) {
+        JSONObject root = new JSONObject();
+        root.put("group_id", QQGroup);
+
+        JSONArray messageArr = new JSONArray();
+
+        JSONObject msg0 = new JSONObject();
+        msg0.put("type", "image");
+
+        JSONObject data = new JSONObject();
+        data.put("file", "base64://" + base64);
+
+        msg0.put("data", data);
+        messageArr.add(msg0);
+
+        root.put("message", messageArr);
+        JSONObject finalJson = new JSONObject();
+        finalJson.put("action", "send_group_msg");
+        finalJson.put("params", root);
+        sendAction(finalJson, "§7发送图片失败");
+    }
+
     private static void sendAction(JSONObject payload, String warnMsg) {
         try {
             client.send(payload.toString());
@@ -168,6 +217,7 @@ public class OneBotApi {
 
     private static void warn(String msg) {
         Plugin plugin = get();
-        if (plugin != null) plugin.getLogger().warning(msg);
+        if (plugin != null)
+            plugin.getLogger().warning(msg);
     }
 }

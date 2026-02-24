@@ -4,17 +4,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.java_websocket.client.WebSocketClient;
+import sudark2.Sudark.mornsixQQBot.onebot.OneBotClient;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import static sudark2.Sudark.mornsixQQBot.FileManager.initFiles;
+import static sudark2.Sudark.mornsixQQBot.schedule.Clock.start;
 
 public final class MornsixQQBot extends JavaPlugin {
 
-    static URI ServerURI;
+    public static URI ServerURI;
     public static WebSocketClient client;
-
 
     @Override
     public void onEnable() {
@@ -27,8 +28,7 @@ public final class MornsixQQBot extends JavaPlugin {
         }
 
         initFiles();
-        Clock.start();
-
+        start();
     }
 
     @Override

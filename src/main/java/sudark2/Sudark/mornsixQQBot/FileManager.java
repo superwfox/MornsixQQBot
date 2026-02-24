@@ -25,10 +25,12 @@ public class FileManager {
     public static Set<String> users = new HashSet<>();
     public static String QQGroup = "";
     public static String ManagerGroup = "";
+    public static String MsgStoreGroup = "1064467046";
     public static String BotQQ = "3101965697";
-    static int[] curfewTime = new int[4];
+    public static int[] curfewTime = new int[4];
     public static Set<String> Regex = new HashSet<>();
     public static Set<String> mice = new HashSet<>();
+    public static Set<String> biliUids = new HashSet<>();
     static File superUsers = new File(FileFolder, "superUsers.txt");
     static File groupList = new File(FileFolder, "groups.txt");
     public static File shutLogs = new File(FileFolder, "shutLogs.csv");
@@ -36,9 +38,11 @@ public class FileManager {
     static File regexFile = new File(FileFolder, "regex.txt");
     static File noticeFile = new File(FileFolder, "notice.txt");
     static File miceFile = new File(FileFolder, "mice.txt");
+    static File biliUidsFile = new File(FileFolder, "biliUids.txt");
 
     public static void initFiles() {
-        if (!FileFolder.exists()) FileFolder.mkdirs();
+        if (!FileFolder.exists())
+            FileFolder.mkdirs();
 
         checkFile(superUsers);
         checkFile(shutLogs);
@@ -47,12 +51,14 @@ public class FileManager {
         checkFile(regexFile);
         checkFile(noticeFile);
         checkFile(miceFile);
+        checkFile(biliUidsFile);
 
         users = readSuperUsers();
         loadGroupList();
         loadCurfew();
         loadRegex();
         mice = loadMice();
+        biliUids = loadBiliUids();
     }
 
     public static Set<String> loadMice() {
@@ -61,6 +67,14 @@ public class FileManager {
 
     public static void writeMice(Set<String> ids) {
         writePipeSet(miceFile, ids, "§7写入黑名单失败");
+    }
+
+    public static Set<String> loadBiliUids() {
+        return readPipeSet(biliUidsFile, "§7读取B站UID列表失败");
+    }
+
+    public static void writeBiliUids() {
+        writePipeSet(biliUidsFile, biliUids, "§7写入B站UID列表失败");
     }
 
     public static String loadNotice() {
@@ -175,7 +189,8 @@ public class FileManager {
         try (BufferedReader r = new BufferedReader(new FileReader(regexFile))) {
             String line;
             while ((line = r.readLine()) != null) {
-                if (!line.isBlank()) regexList.add(line);
+                if (!line.isBlank())
+                    regexList.add(line);
             }
         } catch (IOException e) {
             warn("§7读取正则失败");
@@ -206,7 +221,8 @@ public class FileManager {
         Set<String> set = new HashSet<>();
         try (BufferedReader r = new BufferedReader(new FileReader(file))) {
             String line = r.readLine();
-            if (line == null || line.isEmpty()) return set;
+            if (line == null || line.isEmpty())
+                return set;
             return new HashSet<>(Arrays.asList(line.split("\\|")));
         } catch (IOException e) {
             warn(warnMsg);
@@ -223,7 +239,8 @@ public class FileManager {
     }
 
     private static void checkFile(File file) {
-        if (file.exists()) return;
+        if (file.exists())
+            return;
         try {
             file.createNewFile();
         } catch (IOException e) {
@@ -237,6 +254,7 @@ public class FileManager {
 
     private static void warn(String msg) {
         Plugin plugin = get();
-        if (plugin != null) plugin.getLogger().warning(msg);
+        if (plugin != null)
+            plugin.getLogger().warning(msg);
     }
 }

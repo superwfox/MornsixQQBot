@@ -6,10 +6,10 @@ import net.sf.json.JSONObject;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static sudark2.Sudark.mornsixQQBot.CommandHandler.kick;
-import static sudark2.Sudark.mornsixQQBot.CommandHandler.replyMakeup;
-import static sudark2.Sudark.mornsixQQBot.CommandHandler.shut;
-import static sudark2.Sudark.mornsixQQBot.CommandHandler.unshut;
+import static sudark2.Sudark.mornsixQQBot.command.BanCommands.kick;
+import static sudark2.Sudark.mornsixQQBot.command.BanCommands.replyMakeup;
+import static sudark2.Sudark.mornsixQQBot.command.BanCommands.shut;
+import static sudark2.Sudark.mornsixQQBot.command.BanCommands.unshut;
 import static sudark2.Sudark.mornsixQQBot.FileManager.BotQQ;
 import static sudark2.Sudark.mornsixQQBot.FileManager.ManagerGroup;
 import static sudark2.Sudark.mornsixQQBot.onebot.OneBotApi.sendP;
@@ -23,8 +23,10 @@ public class OneBotReplyHandler {
 
     public static void banOrKick(JSONObject json, String askId, String groupId) {
         JSONArray msgs = json.getJSONArray("message");
-        if (msgs == null || msgs.isEmpty()) return;
-        if (!"reply".equals(msgs.getJSONObject(0).getString("type"))) return;
+        if (msgs == null || msgs.isEmpty())
+            return;
+        if (!"reply".equals(msgs.getJSONObject(0).getString("type")))
+            return;
 
         String msgId = msgs.getJSONObject(0).getJSONObject("data").getString("id");
         String commandMsg = getMsgInReply(msgs);
@@ -38,7 +40,8 @@ public class OneBotReplyHandler {
                 return;
             }
 
-            if (commandMsg == null || commandMsg.isBlank()) return;
+            if (commandMsg == null || commandMsg.isBlank())
+                return;
             String[] args = commandMsg.trim().split("\\s+");
             try {
                 switch (args[0]) {
@@ -77,24 +80,31 @@ public class OneBotReplyHandler {
     private static String getMsgInReply(JSONArray arr) {
         for (int i = 0; i < arr.size(); i++) {
             JSONObject seg = arr.getJSONObject(i);
-            if ("text".equals(seg.optString("type"))) return seg.getJSONObject("data").getString("text");
+            if ("text".equals(seg.optString("type")))
+                return seg.getJSONObject("data").getString("text");
         }
         return null;
     }
 
     private static String extractTargetIdFromShutMessage(JSONArray msgArray) {
         String msg = getAllText(msgArray);
-        if (msg == null) return null;
+        if (msg == null)
+            return null;
 
         String normalized = msg.replace("\r\n", "\n").trim();
         String[] lines = normalized.split("\n");
-        if (lines.length < 4) return null;
+        if (lines.length < 4)
+            return null;
 
         Matcher headerMatcher = SHUT_MESSAGE_HEADER_PATTERN.matcher(lines[0].trim());
-        if (!headerMatcher.matches()) return null;
-        if (!SHUT_REASON_PLACEHOLDER.equals(lines[1].trim())) return null;
-        if (!SHUT_MESSAGE_OPERATOR_PATTERN.matcher(lines[2].trim()).matches()) return null;
-        if (!SHUT_MESSAGE_COUNT_PATTERN.matcher(lines[3].trim()).matches()) return null;
+        if (!headerMatcher.matches())
+            return null;
+        if (!SHUT_REASON_PLACEHOLDER.equals(lines[1].trim()))
+            return null;
+        if (!SHUT_MESSAGE_OPERATOR_PATTERN.matcher(lines[2].trim()).matches())
+            return null;
+        if (!SHUT_MESSAGE_COUNT_PATTERN.matcher(lines[3].trim()).matches())
+            return null;
         return headerMatcher.group(1);
     }
 
