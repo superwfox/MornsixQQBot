@@ -132,6 +132,16 @@ plugins/MornsixQQBot/
 
 ---
 
+## 构建
+
+```bash
+mvn clean package
+```
+
+> 注意：`pom.xml` 中 resources 的 `filtering` 对 `.ttf` 字体文件关闭，避免 `MalformedInputException`。
+
+---
+
 ## 依赖
 
 - Paper API 1.21.10
