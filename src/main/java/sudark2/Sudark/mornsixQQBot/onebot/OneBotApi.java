@@ -207,7 +207,7 @@ public class OneBotApi {
         sendAction(finalJson, "§7发送图片失败");
     }
 
-    private static void sendAction(JSONObject payload, String warnMsg) {
+    public static void sendAction(JSONObject payload, String warnMsg) {
         try {
             client.send(payload.toString());
         } catch (Exception e) {

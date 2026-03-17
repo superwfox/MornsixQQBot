@@ -6,7 +6,7 @@ A Minecraft server plugin based on Paper API that implements QQ group management
 
 ## Overview
 
-This plugin connects to OneBot server via WebSocket, enabling bidirectional communication between Minecraft server and QQ groups, providing member management, message moderation, and curfew control.
+This plugin connects to OneBot server via WebSocket, enabling bidirectional communication between Minecraft server and QQ groups, providing member management, message moderation, and curfew control. Includes Bilibili dynamic monitoring and Outlook email forwarding to manager group.
 
 ---
 
@@ -96,6 +96,10 @@ private static long computeInitialDelay() {
 | `/regex add/remove/list [pattern]` | Regex filter |
 | `/setmice add/remove <qq>` | Blacklist management |
 | `/setnotice <content>` | Set announcement |
+| `/adduid <uid>` | Add Bilibili monitoring |
+| `/removeuid <uid>` | Remove Bilibili monitoring |
+| `/checkuid` | Check monitoring list |
+| `/setemail <email> <token>` | Configure Outlook email monitoring |
 | `/file` | Upload logs |
 | `/update` | Reload config |
 
@@ -119,7 +123,21 @@ Send private command as admin:
 /kick 123456 repeated trolling
 /regex add (blocked_pattern)
 /setnotice Maintenance at 19:00 this Saturday
+/setemail user@outlook.com eyJ0...
 ```
+
+### 4. Outlook Email Monitoring
+
+After configuring email, system scans unread emails every 5 minutes and forwards to manager group:
+
+```text
+/setemail your@outlook.com <Microsoft_Graph_Access_Token>
+```
+
+- Supports text preview (first 200 characters)
+- Auto-downloads and sends image attachments (up to 5)
+- Marks emails as read to prevent duplicates
+- Notifies admin when token expires
 
 ### 3. Reply-Based Operations in Manager Group
 
@@ -143,21 +161,40 @@ plugins/MornsixQQBot/
 ├── curfew.txt        # Curfew time
 ├── regex.txt         # Regex patterns
 ├── notice.txt        # Announcement
-└── mice.txt          # Blacklist
+├── mice.txt          # Blacklist
+├── biliUids.txt      # Bilibili UID monitoring list
+└── email_config.txt  # Email config (email|access_token)
 ```
 
 ### Source Structure
 
 ```
 src/main/java/sudark2/Sudark/mornsixQQBot/
-├── OneBotClient.java                # WebSocket entry
-├── onebot/OneBotApi.java            # OneBot action wrapper
-├── onebot/OneBotEchoStore.java      # Echo async response state
-├── onebot/OneBotEventRouter.java    # Event routing
-├── onebot/OneBotReplyHandler.java   # Reply command and mute-remark matching
-├── CommandHandler.java              # Command handling
+├── MornsixQQBot.java                # Plugin entry
 ├── FileManager.java                 # File IO and config loading
-└── Clock.java                       # Scheduled jobs
+├── onebot/                          # OneBot protocol layer
+│   ├── OneBotClient.java            # WebSocket client
+│   ├── OneBotApi.java               # OneBot action wrapper
+│   ├── OneBotEchoStore.java         # Echo async response state
+│   ├── OneBotEventRouter.java       # Event routing
+│   └── OneBotReplyHandler.java      # Reply command handling
+├── command/                         # Command handlers
+│   ├── BanCommands.java             # Ban/unban/kick
+│   └── AdminCommands.java           # Admin/curfew/regex/notice/blacklist/bili/email
+├── schedule/                        # Scheduled tasks
+│   └── Clock.java                   # Curfew/notice/bili/email scheduling
+├── BiliDataSniffer/                 # Bilibili dynamic monitoring
+│   ├── BiliData.java                # Dynamic data fetching
+│   ├── BiliChecker.java             # Scheduled checker
+│   ├── HttpsHandler.java            # HTTP requests
+│   ├── PictureGen.java              # Image generation
+│   └── DrawUtil.java                # Drawing utilities
+└── EmailRelated/                    # Outlook email monitoring
+    ├── EmailConfig.java             # Email config management
+    ├── GraphApiClient.java          # Microsoft Graph API client
+    ├── EmailMessage.java            # Email data model
+    ├── EmailFormatter.java          # Format email as QQ message
+    └── EmailChecker.java            # Scheduled email scanner
 ```
 
 ---

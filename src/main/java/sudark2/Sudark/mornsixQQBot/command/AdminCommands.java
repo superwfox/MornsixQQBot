@@ -133,4 +133,25 @@ public class AdminCommands {
         }
         sendP(askId, "B站监控列表:\n" + String.join("\n", biliUids));
     }
+
+    public static void setEmail(String[] args, String askId) {
+        if (args.length < 3) {
+            sendP(askId, "命令格式错误\n正确格式: /setEmail 邮箱地址 访问令牌\n示例: /setEmail user@outlook.com eyJ0eXAiOi...");
+            return;
+        }
+
+        String email = args[1];
+        String token = args[2];
+
+        sudark2.Sudark.mornsixQQBot.EmailRelated.EmailConfig.saveConfig(email, token);
+
+        if (!sudark2.Sudark.mornsixQQBot.EmailRelated.GraphApiClient.testConnection()) {
+            sendP(askId, "访问令牌验证失败\n请检查令牌是否正确");
+            return;
+        }
+
+        String maskedToken = sudark2.Sudark.mornsixQQBot.EmailRelated.EmailConfig.maskToken(token);
+        sendP(askId, "已设置邮箱配置\n邮箱: " + email + "\n令牌: " + maskedToken);
+        sendG("邮箱监控已启用\n邮箱: " + email, ManagerGroup);
+    }
 }

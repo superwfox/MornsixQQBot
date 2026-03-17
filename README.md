@@ -6,7 +6,7 @@
 
 ## 项目概述
 
-本插件通过 WebSocket 连接 OneBot 服务端，实现 Minecraft 服务器与 QQ 群的双向通信，提供群成员管理、消息审核、宵禁控制等功能。附带 B站动态嗅探模块，可抓取用户最新动态并生成图片。
+本插件通过 WebSocket 连接 OneBot 服务端，实现 Minecraft 服务器与 QQ 群的双向通信，提供群成员管理、消息审核、宵禁控制等功能。附带 B站动态嗅探模块，可抓取用户最新动态并生成图片。支持 Outlook 邮箱监控，自动转发新邮件到管理群。
 
 ---
 
@@ -25,6 +25,7 @@
 | `/adduid <uid>` | 添加B站监控 |
 | `/removeuid <uid>` | 移除B站监控 |
 | `/checkuid` | 查看监控列表 |
+| `/setemail <邮箱> <令牌>` | 配置Outlook邮箱监控 |
 | `/file` | 上传日志 |
 | `/update` | 重载配置 |
 
@@ -61,12 +62,19 @@ src/main/java/sudark2/Sudark/mornsixQQBot/
 ├── schedule/                          # 定时任务
 │   └── Clock.java                     # 宵禁调度、公告推送、B站动态检查
 │
-└── BiliDataSniffer/                   # B站动态嗅探
-    ├── BiliData.java                  # 动态数据获取与补全
-    ├── BiliChecker.java               # 定时检查 + 图片/卡片/链接推送
-    ├── HttpsHandler.java              # HTTP 请求（空间/详情接口）
-    ├── PictureGen.java                # 动态图片生成（布局）
-    └── DrawUtil.java                  # 绘图工具（字体/裁切/文本换行）
+├── BiliDataSniffer/                   # B站动态嗅探
+│   ├── BiliData.java                  # 动态数据获取与补全
+│   ├── BiliChecker.java               # 定时检查 + 图片/卡片/链接推送
+│   ├── HttpsHandler.java              # HTTP 请求（空间/详情接口）
+│   ├── PictureGen.java                # 动态图片生成（布局）
+│   └── DrawUtil.java                  # 绘图工具（字体/裁切/文本换行）
+│
+└── EmailRelated/                      # Outlook 邮件监控
+    ├── EmailConfig.java               # 邮箱配置管理
+    ├── GraphApiClient.java            # Microsoft Graph API 客户端
+    ├── EmailMessage.java              # 邮件数据模型
+    ├── EmailFormatter.java            # 邮件格式化为QQ消息
+    └── EmailChecker.java              # 定时邮件扫描
 ```
 
 ### 运行时文件
@@ -80,7 +88,8 @@ plugins/MornsixQQBot/
 ├── regex.txt         # 违禁正则
 ├── notice.txt        # 公告内容
 ├── mice.txt          # 黑名单
-└── biliUids.txt      # B站监控UID列表
+├── biliUids.txt      # B站监控UID列表
+└── email_config.txt  # 邮箱配置（邮箱地址|访问令牌）
 ```
 
 ---
@@ -126,7 +135,21 @@ plugins/MornsixQQBot/
 /regex add (测试违禁词)        → AdminCommands.regex()
 /curfew on 23 30              → AdminCommands.curfew()
 /setnotice 本周六19:00维护公告  → AdminCommands.setNotice()
+/setemail user@outlook.com eyJ0... → AdminCommands.setEmail()
 ```
+
+### 4. Outlook 邮件监控
+
+配置邮箱后，系统每 5 分钟自动扫描未读邮件并转发到管理群：
+
+```text
+/setemail your@outlook.com <Microsoft_Graph_Access_Token>
+```
+
+- 支持文本内容预览（前 200 字符）
+- 自动下载并发送图片附件（最多 5 张）
+- 邮件标记为已读，避免重复推送
+- Token 过期时自动通知管理员重新配置
 
 命令由 `OneBotEventRouter.handlePrivateMessage()` 解析路由，分派到 `command` 包下的具体方法执行。
 

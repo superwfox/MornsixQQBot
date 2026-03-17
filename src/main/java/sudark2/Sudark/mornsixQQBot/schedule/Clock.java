@@ -13,6 +13,7 @@ import static sudark2.Sudark.mornsixQQBot.onebot.OneBotApi.*;
 
 public class Clock {
     private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private static int emailCheckCounter = 0;
 
     public static void start() {
         long delay = computeInitialDelay();
@@ -26,6 +27,13 @@ public class Clock {
 
     private static void tick() {
         CompletableFuture.runAsync(sudark2.Sudark.mornsixQQBot.BiliDataSniffer.BiliChecker::check);
+
+        emailCheckCounter++;
+        if (emailCheckCounter >= 300) {
+            emailCheckCounter = 0;
+            CompletableFuture.runAsync(sudark2.Sudark.mornsixQQBot.EmailRelated.EmailChecker::checkEmails);
+        }
+
         if (curfewTime[0] == curfewTime[2] && curfewTime[1] == curfewTime[3])
             return;
 

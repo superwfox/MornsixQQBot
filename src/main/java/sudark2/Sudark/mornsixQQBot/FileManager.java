@@ -21,7 +21,7 @@ import static sudark2.Sudark.mornsixQQBot.onebot.OneBotApi.sendP;
 
 public class FileManager {
 
-    static File FileFolder = get().getDataFolder();
+    public static File FileFolder = get().getDataFolder();
     public static Set<String> users = new HashSet<>();
     public static String QQGroup = "";
     public static String ManagerGroup = "";
@@ -59,6 +59,7 @@ public class FileManager {
         loadRegex();
         mice = loadMice();
         biliUids = loadBiliUids();
+        sudark2.Sudark.mornsixQQBot.EmailRelated.EmailConfig.loadConfig();
     }
 
     public static Set<String> loadMice() {

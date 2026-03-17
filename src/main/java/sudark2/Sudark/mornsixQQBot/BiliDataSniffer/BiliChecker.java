@@ -3,9 +3,13 @@ package sudark2.Sudark.mornsixQQBot.BiliDataSniffer;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Base64;
 import java.util.Set;
 
+import static org.bukkit.map.MapPalette.imageToBytes;
 import static sudark2.Sudark.mornsixQQBot.BiliDataSniffer.DrawUtil.normalizeUrl;
 import static sudark2.Sudark.mornsixQQBot.FileManager.QQGroup;
 import static sudark2.Sudark.mornsixQQBot.FileManager.biliUids;

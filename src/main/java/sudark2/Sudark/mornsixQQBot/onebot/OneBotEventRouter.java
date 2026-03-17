@@ -112,6 +112,7 @@ public class OneBotEventRouter {
                 case "removeuid" -> removeUid(args[1], userId);
                 case "checkuid" -> checkUid(userId);
                 case "testuid" -> sudark2.Sudark.mornsixQQBot.BiliDataSniffer.BiliChecker.testFirst(userId);
+                case "setemail" -> setEmail(args, userId);
             }
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
             sendP(userId, "§7参数不足或格式错误");
