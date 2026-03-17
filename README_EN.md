@@ -138,7 +138,7 @@ After configuring email, system scans unread emails every 5 minutes via IMAP and
 /setemail email auth_code imapHost imapPort smtpHost smtpPort
 ```
 
-- Defaults to NetEase 163 mail servers (imap.163.com:993 / smtp.163.com:465)
+- Defaults to NetEase 163 mail servers (imap.163.com:143 / smtp.163.com:465)
 - Requires enabling IMAP in 163 mailbox settings and obtaining an authorization code
 - Also supports custom IMAP/SMTP servers (QQ Mail, 126, etc.)
 - Supports text preview (first 500 characters)

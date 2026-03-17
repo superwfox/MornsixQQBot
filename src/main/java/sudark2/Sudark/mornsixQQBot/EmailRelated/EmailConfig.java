@@ -11,7 +11,7 @@ public class EmailConfig {
     private static String email = "";
     private static String password = "";
     private static String imapHost = "imap.163.com";
-    private static int imapPort = 993;
+    private static int imapPort = 143;
     private static String smtpHost = "smtp.163.com";
     private static int smtpPort = 465;
     private static final File configFile = new File(FileFolder, "email_config.txt");
@@ -48,7 +48,7 @@ public class EmailConfig {
     }
 
     public static void saveConfig(String newEmail, String newPassword) {
-        saveConfig(newEmail, newPassword, "imap.163.com", 993, "smtp.163.com", 465);
+        saveConfig(newEmail, newPassword, "imap.163.com", 143, "smtp.163.com", 465);
     }
 
     public static void saveConfig(String newEmail, String newPassword,

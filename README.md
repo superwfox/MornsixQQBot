@@ -148,7 +148,7 @@ plugins/MornsixQQBot/
 /setemail 邮箱 授权码 imapHost imapPort smtpHost smtpPort
 ```
 
-- 默认使用网易163邮箱服务器（imap.163.com:993 / smtp.163.com:465）
+- 默认使用网易163邮箱服务器（imap.163.com:143 / smtp.163.com:465）
 - 需在163邮箱设置中开启IMAP服务并获取授权码
 - 也支持自定义 IMAP/SMTP 服务器（如QQ邮箱、126等）
 - 支持文本内容预览（前 500 字符）

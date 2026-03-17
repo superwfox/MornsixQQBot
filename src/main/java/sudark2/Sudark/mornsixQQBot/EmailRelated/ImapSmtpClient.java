@@ -4,12 +4,14 @@ import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.search.FlagTerm;
+import com.sun.mail.imap.IMAPStore;
 import org.bukkit.plugin.Plugin;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -21,20 +23,28 @@ public class ImapSmtpClient {
 
     public static List<EmailMessage> getUnreadEmails() throws Exception {
         Properties props = new Properties();
-        props.put("mail.store.protocol", "imaps");
-        props.put("mail.imaps.host", EmailConfig.getImapHost());
-        props.put("mail.imaps.port", String.valueOf(EmailConfig.getImapPort()));
-        props.put("mail.imaps.ssl.enable", "true");
-        props.put("mail.imaps.connectiontimeout", "10000");
-        props.put("mail.imaps.timeout", "15000");
+        props.put("mail.store.protocol", "imap");
+        props.put("mail.imap.host", EmailConfig.getImapHost());
+        props.put("mail.imap.port", String.valueOf(EmailConfig.getImapPort()));
+        props.put("mail.imap.connectiontimeout", "10000");
+        props.put("mail.imap.timeout", "15000");
 
         Session session = Session.getInstance(props);
-        Store store = null;
+        IMAPStore store = null;
         Folder folder = null;
 
         try {
-            store = session.getStore("imaps");
+            store = (IMAPStore) session.getStore("imap");
             store.connect(EmailConfig.getImapHost(), EmailConfig.getEmail(), EmailConfig.getPassword());
+
+            // 163邮箱要求发送IMAP ID信息
+            HashMap<String, String> iamMap = new HashMap<>();
+            iamMap.put("name", "MornsixQQBot");
+            iamMap.put("version", "2.0");
+            iamMap.put("vendor", "Sudark");
+            iamMap.put("support-email", "support@mornsix.com");
+            store.id(iamMap);
+
             folder = store.getFolder("INBOX");
             folder.open(Folder.READ_WRITE);
 
@@ -77,19 +87,27 @@ public class ImapSmtpClient {
 
     public static boolean testConnection() {
         Properties props = new Properties();
-        props.put("mail.store.protocol", "imaps");
-        props.put("mail.imaps.host", EmailConfig.getImapHost());
-        props.put("mail.imaps.port", String.valueOf(EmailConfig.getImapPort()));
-        props.put("mail.imaps.ssl.enable", "true");
-        props.put("mail.imaps.connectiontimeout", "10000");
-        props.put("mail.imaps.timeout", "15000");
+        props.put("mail.store.protocol", "imap");
+        props.put("mail.imap.host", EmailConfig.getImapHost());
+        props.put("mail.imap.port", String.valueOf(EmailConfig.getImapPort()));
+        props.put("mail.imap.connectiontimeout", "10000");
+        props.put("mail.imap.timeout", "15000");
 
-        Store store = null;
+        IMAPStore store = null;
         Folder folder = null;
         try {
             Session session = Session.getInstance(props);
-            store = session.getStore("imaps");
+            store = (IMAPStore) session.getStore("imap");
             store.connect(EmailConfig.getImapHost(), EmailConfig.getEmail(), EmailConfig.getPassword());
+
+            // 163邮箱要求发送IMAP ID信息
+            HashMap<String, String> iamMap = new HashMap<>();
+            iamMap.put("name", "MornsixQQBot");
+            iamMap.put("version", "2.0");
+            iamMap.put("vendor", "Sudark");
+            iamMap.put("support-email", "support@mornsix.com");
+            store.id(iamMap);
+
             folder = store.getFolder("INBOX");
             folder.open(Folder.READ_ONLY);
             return true;
