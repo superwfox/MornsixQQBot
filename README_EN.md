@@ -99,7 +99,7 @@ private static long computeInitialDelay() {
 | `/adduid <uid>` | Add Bilibili monitoring |
 | `/removeuid <uid>` | Remove Bilibili monitoring |
 | `/checkuid` | Check monitoring list |
-| `/setemail <email> <app_password>` | Configure email monitoring (IMAP/SMTP) |
+| `/setemail <email> <auth_code>` | Configure email monitoring (IMAP/SMTP) |
 | `/file` | Upload logs |
 | `/update` | Reload config |
 
@@ -123,9 +123,9 @@ Send private command as admin:
 /kick 123456 repeated trolling
 /regex add (blocked_pattern)
 /setnotice Maintenance at 19:00 this Saturday
-/setemail user@outlook.com app_password
+/setemail user@163.com auth_code
 # Custom mail server:
-/setemail email password imapHost imapPort smtpHost smtpPort
+/setemail email auth_code imapHost imapPort smtpHost smtpPort
 ```
 
 ### 4. Email Monitoring (IMAP/SMTP)
@@ -133,13 +133,14 @@ Send private command as admin:
 After configuring email, system scans unread emails every 5 minutes via IMAP and forwards to manager group:
 
 ```text
-/setemail your@outlook.com <app_password>
+/setemail your@163.com <auth_code>
 # Custom mail server:
-/setemail email password imapHost imapPort smtpHost smtpPort
+/setemail email auth_code imapHost imapPort smtpHost smtpPort
 ```
 
-- Outlook users need to generate an app password in account security settings
-- Defaults to Outlook servers, also supports custom IMAP/SMTP servers
+- Defaults to NetEase 163 mail servers (imap.163.com:993 / smtp.163.com:465)
+- Requires enabling IMAP in 163 mailbox settings and obtaining an authorization code
+- Also supports custom IMAP/SMTP servers (QQ Mail, 126, etc.)
 - Supports text preview (first 500 characters)
 - Auto-parses and sends image attachments (up to 5, ≤10MB)
 - IMAP SEEN flag marks as read to prevent duplicates
@@ -170,7 +171,7 @@ plugins/MornsixQQBot/
 ├── notice.txt        # Announcement
 ├── mice.txt          # Blacklist
 ├── biliUids.txt      # Bilibili UID monitoring list
-└── email_config.txt  # Email config (email|password|imapHost|imapPort|smtpHost|smtpPort)
+└── email_config.txt  # Email config (email|auth_code|imapHost|imapPort|smtpHost|smtpPort)
 ```
 
 ### Source Structure

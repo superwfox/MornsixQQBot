@@ -27,7 +27,7 @@ public class EmailChecker {
             }
 
         } catch (AuthenticationFailedException e) {
-            sendG("⚠️ 邮箱登录失败，请检查密码\n使用命令: /setEmail 邮箱地址 应用密码", ManagerGroup);
+            sendG("⚠️ 邮箱登录失败，请检查授权码\n使用命令: /setEmail 邮箱地址 授权码", ManagerGroup);
             warn("§7邮箱登录失败");
         } catch (Exception e) {
             warn("§7邮件扫描失败: " + e.getMessage());

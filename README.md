@@ -25,7 +25,7 @@
 | `/adduid <uid>` | 添加B站监控 |
 | `/removeuid <uid>` | 移除B站监控 |
 | `/checkuid` | 查看监控列表 |
-| `/setemail <邮箱> <应用密码>` | 配置邮箱监控（IMAP/SMTP） |
+| `/setemail <邮箱> <授权码>` | 配置邮箱监控（IMAP/SMTP） |
 | `/file` | 上传日志 |
 | `/update` | 重载配置 |
 
@@ -89,7 +89,7 @@ plugins/MornsixQQBot/
 ├── notice.txt        # 公告内容
 ├── mice.txt          # 黑名单
 ├── biliUids.txt      # B站监控UID列表
-└── email_config.txt  # 邮箱配置（邮箱|密码|imapHost|imapPort|smtpHost|smtpPort）
+└── email_config.txt  # 邮箱配置（邮箱|授权码|imapHost|imapPort|smtpHost|smtpPort）
 ```
 
 ---
@@ -135,7 +135,7 @@ plugins/MornsixQQBot/
 /regex add (测试违禁词)        → AdminCommands.regex()
 /curfew on 23 30              → AdminCommands.curfew()
 /setnotice 本周六19:00维护公告  → AdminCommands.setNotice()
-/setemail user@outlook.com app_password → AdminCommands.setEmail()
+/setemail user@163.com auth_code → AdminCommands.setEmail()
 ```
 
 ### 4. 邮件监控（IMAP/SMTP）
@@ -143,17 +143,18 @@ plugins/MornsixQQBot/
 配置邮箱后，系统每 5 分钟通过 IMAP 扫描未读邮件并转发到管理群：
 
 ```text
-/setemail your@outlook.com <应用密码>
+/setemail your@163.com <授权码>
 # 自定义邮件服务器：
-/setemail 邮箱 密码 imapHost imapPort smtpHost smtpPort
+/setemail 邮箱 授权码 imapHost imapPort smtpHost smtpPort
 ```
 
-- Outlook 用户需在账户安全设置中生成应用密码
-- 默认使用 Outlook 服务器，也支持自定义 IMAP/SMTP 服务器
+- 默认使用网易163邮箱服务器（imap.163.com:993 / smtp.163.com:465）
+- 需在163邮箱设置中开启IMAP服务并获取授权码
+- 也支持自定义 IMAP/SMTP 服务器（如QQ邮箱、126等）
 - 支持文本内容预览（前 500 字符）
 - 自动解析并发送图片附件（最多 5 张，≤10MB）
 - IMAP SEEN flag 标记已读，避免重复推送
-- 登录失败时自动通知管理员检查密码
+- 登录失败时自动通知管理员检查授权码
 - SMTP 发件功能已预留
 
 命令由 `OneBotEventRouter.handlePrivateMessage()` 解析路由，分派到 `command` 包下的具体方法执行。

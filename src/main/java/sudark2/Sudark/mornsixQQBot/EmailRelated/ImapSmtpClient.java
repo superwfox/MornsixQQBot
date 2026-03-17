@@ -106,7 +106,9 @@ public class ImapSmtpClient {
         props.put("mail.smtp.host", EmailConfig.getSmtpHost());
         props.put("mail.smtp.port", String.valueOf(EmailConfig.getSmtpPort()));
         props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.ssl.enable", "true");
+        props.put("mail.smtp.socketFactory.port", String.valueOf(EmailConfig.getSmtpPort()));
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         props.put("mail.smtp.connectiontimeout", "10000");
         props.put("mail.smtp.timeout", "15000");
 

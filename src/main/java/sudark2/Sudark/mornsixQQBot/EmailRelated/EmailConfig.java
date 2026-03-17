@@ -10,10 +10,10 @@ import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.get;
 public class EmailConfig {
     private static String email = "";
     private static String password = "";
-    private static String imapHost = "outlook.office365.com";
+    private static String imapHost = "imap.163.com";
     private static int imapPort = 993;
-    private static String smtpHost = "smtp-mail.outlook.com";
-    private static int smtpPort = 587;
+    private static String smtpHost = "smtp.163.com";
+    private static int smtpPort = 465;
     private static final File configFile = new File(FileFolder, "email_config.txt");
 
     public static void loadConfig() {
@@ -48,7 +48,7 @@ public class EmailConfig {
     }
 
     public static void saveConfig(String newEmail, String newPassword) {
-        saveConfig(newEmail, newPassword, "outlook.office365.com", 993, "smtp-mail.outlook.com", 587);
+        saveConfig(newEmail, newPassword, "imap.163.com", 993, "smtp.163.com", 465);
     }
 
     public static void saveConfig(String newEmail, String newPassword,

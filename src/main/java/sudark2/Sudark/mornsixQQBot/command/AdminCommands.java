@@ -136,7 +136,7 @@ public class AdminCommands {
 
     public static void setEmail(String[] args, String askId) {
         if (args.length < 3) {
-            sendP(askId, "命令格式错误\n正确格式: /setEmail 邮箱地址 应用密码\n示例: /setEmail user@outlook.com your_app_password\n可选: /setEmail 邮箱 密码 imapHost imapPort smtpHost smtpPort");
+            sendP(askId, "命令格式错误\n正确格式: /setEmail 邮箱地址 授权码\n示例: /setEmail user@163.com your_auth_code\n可选: /setEmail 邮箱 授权码 imapHost imapPort smtpHost smtpPort");
             return;
         }
 
@@ -151,12 +151,12 @@ public class AdminCommands {
         }
 
         if (!sudark2.Sudark.mornsixQQBot.EmailRelated.ImapSmtpClient.testConnection()) {
-            sendP(askId, "邮箱登录失败\n请检查应用密码是否正确");
+            sendP(askId, "邮箱登录失败\n请检查授权码是否正确");
             return;
         }
 
         String maskedPassword = sudark2.Sudark.mornsixQQBot.EmailRelated.EmailConfig.maskPassword(password);
-        sendP(askId, "已设置邮箱配置\n邮箱: " + email + "\n密码: " + maskedPassword);
+        sendP(askId, "已设置邮箱配置\n邮箱: " + email + "\n授权码: " + maskedPassword);
         sendG("邮箱监控已启用\n邮箱: " + email, ManagerGroup);
     }
 }
