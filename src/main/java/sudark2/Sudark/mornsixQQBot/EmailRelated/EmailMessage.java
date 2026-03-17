@@ -69,6 +69,7 @@ public class EmailMessage {
         private String contentType;
         private int size;
         private boolean isInline;
+        private byte[] data;
 
         public String getId() {
             return id;
@@ -108,6 +109,14 @@ public class EmailMessage {
 
         public void setInline(boolean inline) {
             isInline = inline;
+        }
+
+        public byte[] getData() {
+            return data;
+        }
+
+        public void setData(byte[] data) {
+            this.data = data;
         }
 
         public boolean isImage() {

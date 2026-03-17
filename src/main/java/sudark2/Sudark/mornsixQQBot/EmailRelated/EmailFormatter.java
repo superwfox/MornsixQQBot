@@ -44,7 +44,7 @@ public class EmailFormatter {
                 if (!attachment.isImage())
                     continue;
 
-                byte[] imageData = GraphApiClient.downloadAttachment(email.getId(), attachment.getId());
+                byte[] imageData = attachment.getData();
                 if (imageData != null && imageData.length > 0) {
                     String base64 = Base64.getEncoder().encodeToString(imageData);
                     JSONObject imageMsg = new JSONObject();

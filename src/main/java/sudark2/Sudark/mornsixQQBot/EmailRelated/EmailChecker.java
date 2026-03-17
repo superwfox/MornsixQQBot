@@ -1,5 +1,6 @@
 package sudark2.Sudark.mornsixQQBot.EmailRelated;
 
+import jakarta.mail.AuthenticationFailedException;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -15,20 +16,19 @@ public class EmailChecker {
             return;
 
         try {
-            List<EmailMessage> emails = GraphApiClient.getUnreadEmails();
+            List<EmailMessage> emails = ImapSmtpClient.getUnreadEmails();
 
             for (EmailMessage email : emails) {
                 try {
                     EmailFormatter.sendEmailToManager(email);
-                    GraphApiClient.markAsRead(email.getId());
                 } catch (Exception e) {
                     warn("§7处理邮件失败: " + e.getMessage());
                 }
             }
 
-        } catch (GraphApiClient.TokenExpiredException e) {
-            sendG("⚠️ 邮箱访问令牌已过期，请重新配置\n使用命令: /setEmail 邮箱地址 访问令牌", ManagerGroup);
-            warn("§7邮箱访问令牌已过期");
+        } catch (AuthenticationFailedException e) {
+            sendG("⚠️ 邮箱登录失败，请检查密码\n使用命令: /setEmail 邮箱地址 应用密码", ManagerGroup);
+            warn("§7邮箱登录失败");
         } catch (Exception e) {
             warn("§7邮件扫描失败: " + e.getMessage());
         }

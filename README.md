@@ -25,7 +25,7 @@
 | `/adduid <uid>` | 添加B站监控 |
 | `/removeuid <uid>` | 移除B站监控 |
 | `/checkuid` | 查看监控列表 |
-| `/setemail <邮箱> <令牌>` | 配置Outlook邮箱监控 |
+| `/setemail <邮箱> <应用密码>` | 配置邮箱监控（IMAP/SMTP） |
 | `/file` | 上传日志 |
 | `/update` | 重载配置 |
 
@@ -69,9 +69,9 @@ src/main/java/sudark2/Sudark/mornsixQQBot/
 │   ├── PictureGen.java                # 动态图片生成（布局）
 │   └── DrawUtil.java                  # 绘图工具（字体/裁切/文本换行）
 │
-└── EmailRelated/                      # Outlook 邮件监控
+└── EmailRelated/                      # 邮件监控（IMAP/SMTP）
     ├── EmailConfig.java               # 邮箱配置管理
-    ├── GraphApiClient.java            # Microsoft Graph API 客户端
+    ├── ImapSmtpClient.java            # IMAP收件 + SMTP发件客户端
     ├── EmailMessage.java              # 邮件数据模型
     ├── EmailFormatter.java            # 邮件格式化为QQ消息
     └── EmailChecker.java              # 定时邮件扫描
@@ -89,7 +89,7 @@ plugins/MornsixQQBot/
 ├── notice.txt        # 公告内容
 ├── mice.txt          # 黑名单
 ├── biliUids.txt      # B站监控UID列表
-└── email_config.txt  # 邮箱配置（邮箱地址|访问令牌）
+└── email_config.txt  # 邮箱配置（邮箱|密码|imapHost|imapPort|smtpHost|smtpPort）
 ```
 
 ---
@@ -135,21 +135,26 @@ plugins/MornsixQQBot/
 /regex add (测试违禁词)        → AdminCommands.regex()
 /curfew on 23 30              → AdminCommands.curfew()
 /setnotice 本周六19:00维护公告  → AdminCommands.setNotice()
-/setemail user@outlook.com eyJ0... → AdminCommands.setEmail()
+/setemail user@outlook.com app_password → AdminCommands.setEmail()
 ```
 
-### 4. Outlook 邮件监控
+### 4. 邮件监控（IMAP/SMTP）
 
-配置邮箱后，系统每 5 分钟自动扫描未读邮件并转发到管理群：
+配置邮箱后，系统每 5 分钟通过 IMAP 扫描未读邮件并转发到管理群：
 
 ```text
-/setemail your@outlook.com <Microsoft_Graph_Access_Token>
+/setemail your@outlook.com <应用密码>
+# 自定义邮件服务器：
+/setemail 邮箱 密码 imapHost imapPort smtpHost smtpPort
 ```
 
-- 支持文本内容预览（前 200 字符）
-- 自动下载并发送图片附件（最多 5 张）
-- 邮件标记为已读，避免重复推送
-- Token 过期时自动通知管理员重新配置
+- Outlook 用户需在账户安全设置中生成应用密码
+- 默认使用 Outlook 服务器，也支持自定义 IMAP/SMTP 服务器
+- 支持文本内容预览（前 500 字符）
+- 自动解析并发送图片附件（最多 5 张，≤10MB）
+- IMAP SEEN flag 标记已读，避免重复推送
+- 登录失败时自动通知管理员检查密码
+- SMTP 发件功能已预留
 
 命令由 `OneBotEventRouter.handlePrivateMessage()` 解析路由，分派到 `command` 包下的具体方法执行。
 
@@ -170,3 +175,4 @@ mvn clean package
 - Paper API 1.21.10
 - Java-WebSocket 1.5.7
 - json-lib 2.4
+- Jakarta Mail 2.0.1

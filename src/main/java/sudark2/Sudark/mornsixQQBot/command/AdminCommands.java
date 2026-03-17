@@ -136,22 +136,27 @@ public class AdminCommands {
 
     public static void setEmail(String[] args, String askId) {
         if (args.length < 3) {
-            sendP(askId, "命令格式错误\n正确格式: /setEmail 邮箱地址 访问令牌\n示例: /setEmail user@outlook.com eyJ0eXAiOi...");
+            sendP(askId, "命令格式错误\n正确格式: /setEmail 邮箱地址 应用密码\n示例: /setEmail user@outlook.com your_app_password\n可选: /setEmail 邮箱 密码 imapHost imapPort smtpHost smtpPort");
             return;
         }
 
         String email = args[1];
-        String token = args[2];
+        String password = args[2];
 
-        sudark2.Sudark.mornsixQQBot.EmailRelated.EmailConfig.saveConfig(email, token);
+        if (args.length >= 7) {
+            sudark2.Sudark.mornsixQQBot.EmailRelated.EmailConfig.saveConfig(
+                    email, password, args[3], Integer.parseInt(args[4]), args[5], Integer.parseInt(args[6]));
+        } else {
+            sudark2.Sudark.mornsixQQBot.EmailRelated.EmailConfig.saveConfig(email, password);
+        }
 
-        if (!sudark2.Sudark.mornsixQQBot.EmailRelated.GraphApiClient.testConnection()) {
-            sendP(askId, "访问令牌验证失败\n请检查令牌是否正确");
+        if (!sudark2.Sudark.mornsixQQBot.EmailRelated.ImapSmtpClient.testConnection()) {
+            sendP(askId, "邮箱登录失败\n请检查应用密码是否正确");
             return;
         }
 
-        String maskedToken = sudark2.Sudark.mornsixQQBot.EmailRelated.EmailConfig.maskToken(token);
-        sendP(askId, "已设置邮箱配置\n邮箱: " + email + "\n令牌: " + maskedToken);
+        String maskedPassword = sudark2.Sudark.mornsixQQBot.EmailRelated.EmailConfig.maskPassword(password);
+        sendP(askId, "已设置邮箱配置\n邮箱: " + email + "\n密码: " + maskedPassword);
         sendG("邮箱监控已启用\n邮箱: " + email, ManagerGroup);
     }
 }

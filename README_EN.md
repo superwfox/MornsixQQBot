@@ -99,7 +99,7 @@ private static long computeInitialDelay() {
 | `/adduid <uid>` | Add Bilibili monitoring |
 | `/removeuid <uid>` | Remove Bilibili monitoring |
 | `/checkuid` | Check monitoring list |
-| `/setemail <email> <token>` | Configure Outlook email monitoring |
+| `/setemail <email> <app_password>` | Configure email monitoring (IMAP/SMTP) |
 | `/file` | Upload logs |
 | `/update` | Reload config |
 
@@ -123,21 +123,28 @@ Send private command as admin:
 /kick 123456 repeated trolling
 /regex add (blocked_pattern)
 /setnotice Maintenance at 19:00 this Saturday
-/setemail user@outlook.com eyJ0...
+/setemail user@outlook.com app_password
+# Custom mail server:
+/setemail email password imapHost imapPort smtpHost smtpPort
 ```
 
-### 4. Outlook Email Monitoring
+### 4. Email Monitoring (IMAP/SMTP)
 
-After configuring email, system scans unread emails every 5 minutes and forwards to manager group:
+After configuring email, system scans unread emails every 5 minutes via IMAP and forwards to manager group:
 
 ```text
-/setemail your@outlook.com <Microsoft_Graph_Access_Token>
+/setemail your@outlook.com <app_password>
+# Custom mail server:
+/setemail email password imapHost imapPort smtpHost smtpPort
 ```
 
-- Supports text preview (first 200 characters)
-- Auto-downloads and sends image attachments (up to 5)
-- Marks emails as read to prevent duplicates
-- Notifies admin when token expires
+- Outlook users need to generate an app password in account security settings
+- Defaults to Outlook servers, also supports custom IMAP/SMTP servers
+- Supports text preview (first 500 characters)
+- Auto-parses and sends image attachments (up to 5, ≤10MB)
+- IMAP SEEN flag marks as read to prevent duplicates
+- Notifies admin on login failure
+- SMTP sending reserved for future use
 
 ### 3. Reply-Based Operations in Manager Group
 
@@ -163,7 +170,7 @@ plugins/MornsixQQBot/
 ├── notice.txt        # Announcement
 ├── mice.txt          # Blacklist
 ├── biliUids.txt      # Bilibili UID monitoring list
-└── email_config.txt  # Email config (email|access_token)
+└── email_config.txt  # Email config (email|password|imapHost|imapPort|smtpHost|smtpPort)
 ```
 
 ### Source Structure
@@ -189,9 +196,9 @@ src/main/java/sudark2/Sudark/mornsixQQBot/
 │   ├── HttpsHandler.java            # HTTP requests
 │   ├── PictureGen.java              # Image generation
 │   └── DrawUtil.java                # Drawing utilities
-└── EmailRelated/                    # Outlook email monitoring
+└── EmailRelated/                    # Email monitoring (IMAP/SMTP)
     ├── EmailConfig.java             # Email config management
-    ├── GraphApiClient.java          # Microsoft Graph API client
+    ├── ImapSmtpClient.java          # IMAP receive + SMTP send client
     ├── EmailMessage.java            # Email data model
     ├── EmailFormatter.java          # Format email as QQ message
     └── EmailChecker.java            # Scheduled email scanner
@@ -216,3 +223,4 @@ src/main/java/sudark2/Sudark/mornsixQQBot/
 - Paper API 1.21.10
 - Java-WebSocket 1.5.7
 - json-lib 2.4
+- Jakarta Mail 2.0.1
