@@ -29,7 +29,7 @@ public class Clock {
         CompletableFuture.runAsync(sudark2.Sudark.mornsixQQBot.BiliDataSniffer.BiliChecker::check);
 
         emailCheckCounter++;
-        if (emailCheckCounter >= 300) {
+        if (emailCheckCounter >= 5) {
             emailCheckCounter = 0;
             CompletableFuture.runAsync(sudark2.Sudark.mornsixQQBot.EmailRelated.EmailChecker::checkEmails);
         }
