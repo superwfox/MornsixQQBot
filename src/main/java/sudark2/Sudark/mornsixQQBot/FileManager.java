@@ -185,6 +185,15 @@ public class FileManager {
         }
     }
 
+    public static void replaceShutLogs(byte[] content) {
+        try {
+            Files.write(shutLogs.toPath(), content);
+        } catch (IOException e) {
+            warn("§7替换禁言记录失败");
+            notifyAdmins("§7替换禁言记录失败");
+        }
+    }
+
     public static void loadRegex() {
         List<String> regexList = new ArrayList<>();
         try (BufferedReader r = new BufferedReader(new FileReader(regexFile))) {

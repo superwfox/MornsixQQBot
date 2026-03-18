@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static sudark2.Sudark.mornsixQQBot.FileManager.*;
+import static sudark2.Sudark.mornsixQQBot.ShutLogBuffer.add;
 import static sudark2.Sudark.mornsixQQBot.onebot.OneBotApi.*;
 
 public class BanCommands {
@@ -14,40 +15,48 @@ public class BanCommands {
             time = 0;
         if (reason == null)
             reason = "无";
-        List<String[]> args = readShutLogs();
-        args.add(new String[] { "禁言", userId, time.toString(), reason, formatTime(), askId });
-        int banTime = getShutTime(args, userId);
-        writeShutLogs(args);
+        String[] record = new String[] { "禁言", userId, time.toString(), reason, formatTime(), askId };
         ban(userId, time, QQGroup);
-        sendG("已禁言 [" + userId + "] " + time + "秒\n原因：" + reason + "\n处理者： " + askId + "\n总禁言次数 ： " + banTime,
-                ManagerGroup);
-        sendG("已禁言 [" + userId + "] " + time + "秒\n原因：" + reason + "\n总禁言次数 ： " + banTime, QQGroup);
+        String result = add(record);
+        if ("cancelled".equals(result)) {
+            sendG("[已抵消] 禁言/解禁 [" + userId + "] 操作互相抵消，不写入记录", ManagerGroup);
+        } else {
+            sendG("[暂定] 已禁言 [" + userId + "] " + time + "秒\n原因：" + reason + "\n处理者： " + askId, ManagerGroup);
+            sendG("已禁言 [" + userId + "] " + time + "秒\n原因：" + reason, QQGroup);
+        }
     }
 
     public static void shutAuto(String userId, String time, String askId) {
         String reason = "[回复此消息补充]";
-        List<String[]> args = readShutLogs();
-        args.add(new String[] { "禁言", userId, time, "无", formatTime(), askId });
-        int banTime = getShutTime(args, userId);
-        writeShutLogs(args);
-        sendG("已禁言 [" + userId + "] " + time + "秒\n原因：" + reason + "\n处理者： " + askId + "\n总禁言次数 ： " + banTime,
-                ManagerGroup);
+        String[] record = new String[] { "禁言", userId, time, "无", formatTime(), askId };
+        String result = add(record);
+        if ("cancelled".equals(result)) {
+            sendG("[已抵消] 禁言/解禁 [" + userId + "] 操作互相抵消，不写入记录", ManagerGroup);
+        } else {
+            sendG("[暂定] 已禁言 [" + userId + "] " + time + "秒\n原因：" + reason + "\n处理者： " + askId, ManagerGroup);
+        }
     }
 
     public static void unShutAuto(String userId, String askId) {
-        List<String[]> args = readShutLogs();
-        args.add(new String[] { "解禁", userId, "0", "无", formatTime(), askId });
-        writeShutLogs(args);
-        sendG("已解禁 [" + userId + "]\n处理者： " + askId, ManagerGroup);
+        String[] record = new String[] { "解禁", userId, "0", "无", formatTime(), askId };
+        String result = add(record);
+        if ("cancelled".equals(result)) {
+            sendG("[已抵消] 禁言/解禁 [" + userId + "] 操作互相抵消，不写入记录", ManagerGroup);
+        } else {
+            sendG("[暂定] 已解禁 [" + userId + "]\n处理者： " + askId, ManagerGroup);
+        }
     }
 
     public static void unshut(String userId, String askId) {
-        List<String[]> args = readShutLogs();
-        args.add(new String[] { "解禁", userId, "0", "无", formatTime(), askId });
-        writeShutLogs(args);
+        String[] record = new String[] { "解禁", userId, "0", "无", formatTime(), askId };
         ban(userId, 0, QQGroup);
-        sendG("已解禁 [" + userId + "]\n处理者： " + askId, ManagerGroup);
-        sendG("已解禁 [" + userId + "]", QQGroup);
+        String result = add(record);
+        if ("cancelled".equals(result)) {
+            sendG("[已抵消] 禁言/解禁 [" + userId + "] 操作互相抵消，不写入记录", ManagerGroup);
+        } else {
+            sendG("[暂定] 已解禁 [" + userId + "]\n处理者： " + askId, ManagerGroup);
+            sendG("已解禁 [" + userId + "]", QQGroup);
+        }
     }
 
     public static void kick(String userId, String reason, String askId) {
