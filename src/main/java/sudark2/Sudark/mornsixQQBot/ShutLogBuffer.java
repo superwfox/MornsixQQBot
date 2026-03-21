@@ -60,6 +60,19 @@ public class ShutLogBuffer {
         return "buffered";
     }
 
+    /**
+     * 修改缓冲区中某用户的禁言原因和处理者。
+     * 返回 true 表示修改成功（记录仍在缓冲区），false 表示该用户不在缓冲区。
+     */
+    public static boolean updateReason(String userId, String reason, String askId) {
+        BufferedEntry entry = buffer.get(userId);
+        if (entry == null || !isShutType(entry.record))
+            return false;
+        entry.record[3] = reason;
+        entry.record[5] = askId;
+        return true;
+    }
+
     private static void flush(String userId) {
         BufferedEntry entry = buffer.remove(userId);
         if (entry == null) return;
