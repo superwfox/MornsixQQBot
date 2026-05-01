@@ -1,12 +1,11 @@
 package sudark2.Sudark.mornsixQQBot.EmailRelated;
 
 import jakarta.mail.AuthenticationFailedException;
-import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
 import static sudark2.Sudark.mornsixQQBot.FileManager.ManagerGroup;
-import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.get;
+import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.logger;
 import static sudark2.Sudark.mornsixQQBot.onebot.OneBotApi.sendG;
 
 public class EmailChecker {
@@ -35,8 +34,6 @@ public class EmailChecker {
     }
 
     private static void warn(String msg) {
-        Plugin plugin = get();
-        if (plugin != null)
-            plugin.getLogger().warning(msg);
+        logger.warning(msg);
     }
 }

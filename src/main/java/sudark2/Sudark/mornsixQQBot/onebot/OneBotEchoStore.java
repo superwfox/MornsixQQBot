@@ -1,15 +1,13 @@
 package sudark2.Sudark.mornsixQQBot.onebot;
 
-import it.unimi.dsi.fastutil.Pair;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.bukkit.plugin.Plugin;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.client;
-import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.get;
+import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.logger;
 
 public class OneBotEchoStore {
     private static final ConcurrentHashMap<String, CompletableFuture<Pair<String, JSONArray>>> pending = new ConcurrentHashMap<>();
@@ -103,7 +101,6 @@ public class OneBotEchoStore {
     }
 
     private static void warn(String msg) {
-        Plugin plugin = get();
-        if (plugin != null) plugin.getLogger().warning(msg);
+        logger.warning(msg);
     }
 }

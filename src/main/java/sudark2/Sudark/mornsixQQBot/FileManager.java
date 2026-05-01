@@ -1,7 +1,5 @@
 package sudark2.Sudark.mornsixQQBot;
 
-import org.bukkit.plugin.Plugin;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,12 +14,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.get;
+import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.logger;
 import static sudark2.Sudark.mornsixQQBot.onebot.OneBotApi.sendP;
 
 public class FileManager {
 
-    public static File FileFolder = get().getDataFolder();
+    public static File FileFolder = new File(System.getenv().getOrDefault("MORNSIX_DATA_DIR", "data"));
     public static Set<String> users = new HashSet<>();
     public static String QQGroup = "";
     public static String ManagerGroup = "";
@@ -263,8 +261,6 @@ public class FileManager {
     }
 
     private static void warn(String msg) {
-        Plugin plugin = get();
-        if (plugin != null)
-            plugin.getLogger().warning(msg);
+        logger.warning(msg);
     }
 }

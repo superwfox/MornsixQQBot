@@ -1,11 +1,9 @@
 package sudark2.Sudark.mornsixQQBot.EmailRelated;
 
-import org.bukkit.plugin.Plugin;
-
 import java.io.*;
 
 import static sudark2.Sudark.mornsixQQBot.FileManager.FileFolder;
-import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.get;
+import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.logger;
 
 public class EmailConfig {
     private static String email = "";
@@ -85,8 +83,6 @@ public class EmailConfig {
     }
 
     private static void warn(String msg) {
-        Plugin plugin = get();
-        if (plugin != null)
-            plugin.getLogger().warning(msg);
+        logger.warning(msg);
     }
 }

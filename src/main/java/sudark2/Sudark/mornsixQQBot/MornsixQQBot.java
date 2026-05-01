@@ -1,47 +1,46 @@
 package sudark2.Sudark.mornsixQQBot;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.java_websocket.client.WebSocketClient;
 import sudark2.Sudark.mornsixQQBot.onebot.OneBotClient;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.logging.Logger;
 
 import static sudark2.Sudark.mornsixQQBot.FileManager.initFiles;
 import static sudark2.Sudark.mornsixQQBot.schedule.Clock.start;
 
-public final class MornsixQQBot extends JavaPlugin {
+public final class MornsixQQBot {
+
+    public static final Logger logger = Logger.getLogger("MornsixQQBot");
 
     public static URI ServerURI;
     public static WebSocketClient client;
 
-    @Override
-    public void onEnable() {
+    public static void main(String[] args) {
+        String wsUrl = System.getenv().getOrDefault("MORNSIX_WS_URL", "ws://127.0.0.1:3001");
         try {
-            ServerURI = new URI("ws://127.0.0.1:3001");
+            ServerURI = new URI(wsUrl);
             client = new OneBotClient();
             client.connect();
         } catch (URISyntaxException e) {
-            getLogger().warning("§7WebSocket 地址格式错误，插件未能连接 OneBot");
+            logger.warning("WebSocket 地址格式错误，未能连接 OneBot: " + wsUrl);
         }
 
         initFiles();
         start();
-    }
 
-    @Override
-    public void onDisable() {
-        try {
-            if (client != null) {
-                client.close();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                if (client != null) client.close();
+            } catch (Exception ignored) {
             }
-        } catch (Exception ignored) {
-        }
-    }
+        }, "MornsixQQBot-Shutdown"));
 
-    public static Plugin get() {
-        return Bukkit.getPluginManager().getPlugin("MornsixQQBot");
+        try {
+            Thread.currentThread().join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

@@ -5,7 +5,6 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.search.FlagTerm;
 import com.sun.mail.imap.IMAPStore;
-import org.bukkit.plugin.Plugin;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -15,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.get;
+import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.logger;
 
 public class ImapSmtpClient {
 
@@ -216,8 +215,6 @@ public class ImapSmtpClient {
     }
 
     private static void warn(String msg) {
-        Plugin plugin = get();
-        if (plugin != null)
-            plugin.getLogger().warning(msg);
+        logger.warning(msg);
     }
 }

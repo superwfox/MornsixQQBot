@@ -2,7 +2,6 @@ package sudark2.Sudark.mornsixQQBot.onebot;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.bukkit.plugin.Plugin;
 
 import java.nio.file.Files;
 import java.util.Base64;
@@ -12,7 +11,7 @@ import static sudark2.Sudark.mornsixQQBot.FileManager.ManagerGroup;
 import static sudark2.Sudark.mornsixQQBot.FileManager.QQGroup;
 import static sudark2.Sudark.mornsixQQBot.FileManager.shutLogs;
 import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.client;
-import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.get;
+import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.logger;
 
 public class OneBotApi {
     public static void refuseIn(String flag) {
@@ -216,8 +215,6 @@ public class OneBotApi {
     }
 
     private static void warn(String msg) {
-        Plugin plugin = get();
-        if (plugin != null)
-            plugin.getLogger().warning(msg);
+        logger.warning(msg);
     }
 }

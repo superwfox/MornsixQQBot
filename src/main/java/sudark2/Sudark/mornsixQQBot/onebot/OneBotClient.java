@@ -1,12 +1,11 @@
 package sudark2.Sudark.mornsixQQBot.onebot;
 
 import net.sf.json.JSONObject;
-import org.bukkit.plugin.Plugin;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.ServerURI;
-import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.get;
+import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.logger;
 import static sudark2.Sudark.mornsixQQBot.onebot.OneBotEchoStore.handleEcho;
 import static sudark2.Sudark.mornsixQQBot.onebot.OneBotEventRouter.handle;
 
@@ -29,9 +28,7 @@ public class OneBotClient extends WebSocketClient {
 
     @Override
     public void onError(Exception e) {
-        Plugin plugin = get();
-        if (plugin != null)
-            plugin.getLogger().warning("§7OneBot 连接异常");
+        logger.warning("OneBot 连接异常");
     }
 
     @Override

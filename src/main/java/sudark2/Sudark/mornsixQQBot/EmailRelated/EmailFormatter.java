@@ -2,13 +2,12 @@ package sudark2.Sudark.mornsixQQBot.EmailRelated;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.bukkit.plugin.Plugin;
 
 import java.util.Base64;
 import java.util.List;
 
 import static sudark2.Sudark.mornsixQQBot.FileManager.ManagerGroup;
-import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.get;
+import static sudark2.Sudark.mornsixQQBot.MornsixQQBot.logger;
 import static sudark2.Sudark.mornsixQQBot.onebot.OneBotApi.sendAction;
 
 public class EmailFormatter {
@@ -85,8 +84,6 @@ public class EmailFormatter {
     }
 
     private static void warn(String msg) {
-        Plugin plugin = get();
-        if (plugin != null)
-            plugin.getLogger().warning(msg);
+        logger.warning(msg);
     }
 }
