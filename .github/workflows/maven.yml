@@ -27,7 +27,7 @@ jobs:
       - name: Upload jar
         uses: actions/upload-artifact@v4
         with:
-          name: MornsixQQBot-${{ github.ref_name }}-${{ github.sha }}
+          name: MornsixQQBot-${{ github.run_number }}-${{ github.sha }}
           path: target/MornsixQQBot-*.jar
           if-no-files-found: error
           retention-days: 30
